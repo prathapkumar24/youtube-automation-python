@@ -35,7 +35,18 @@ jobs:
           ls -lh cookies.txt
           wc -l cookies.txt
           ls -l cookies.txt
-
+      - name: Debug env vars
+        env:
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+        run: |
+          echo "CHANNEL ID length:"
+          python - <<EOF
+          import os
+          value = os.getenv("YOUTUBE_CHANNEL_ID", "")
+          print("Length:", len(value))
+          print("Starts with UC:", value.startswith("UC"))
+          EOF
+      
       - name: Upload latest YouTube video to Facebook
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
