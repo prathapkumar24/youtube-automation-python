@@ -1,0 +1,47 @@
+name: YouTube to Facebook Upload
+
+on:
+  schedule:
+    - cron: "4 * * * *"
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yt-dlp requests python-dotenv
+
+      - name: Verify yt-dlp
+        run: yt-dlp --version
+
+      - name: Create cookies file
+        run: |
+          echo "${{ secrets.YTDLP_COOKIES }}" > cookies.txt
+
+      - name: Check cookies file
+        run: |
+          ls -lh cookies.txt
+          wc -l cookies.txt
+          ls -l cookies.txt
+
+      - name: Upload latest YouTube video to Facebook
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          COOKIE_PATH: ./cookies.txt
+        run: |
+          python upload.py
