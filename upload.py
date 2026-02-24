@@ -90,7 +90,9 @@ def download_video(video_id: str) -> str:
         "verbose": True,
 
         # 🔑 REQUIRED for modern YouTube
-        "js_runtimes": ["node"],
+        "js_runtimes": {
+            "node": {}
+        },
         "remote_components": ["ejs:github"],
     }
 
